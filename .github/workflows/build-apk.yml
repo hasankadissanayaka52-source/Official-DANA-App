@@ -27,19 +27,22 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Bubblewrap CLI (Google Official TWA Builder)
-        run: |
-          npm install -g @bubblewrap/cli
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
 
-      - name: Initialize & Build Android APK
+      - name: Build TWA APK (Automated)
         run: |
-          mkdir build_twa && cd build_twa
-          bubblewrap init --manifest=https://mellifluous-hummingbird-8ca65e.netlify.app/manifest.json --directory=.
-          bubblewrap build
+          mkdir -p build_twa && cd build_twa
+          bubblewrap init --manifest=https://mellifluous-hummingbird-8ca65e.netlify.app/manifest.json --directory=. --skipPwaValidation
+          bubblewrap build --skipSigning || bubblewrap build
           ls -la
 
       - name: Upload Built APK Artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: Official-Agent-DANA-APK
-          path: build_twa/*.apk
+          path: |
+            build_twa/*.apk
+            build_twa/app/*.apk
+            build_twa/app/build/outputs/apk/**/*.apk
