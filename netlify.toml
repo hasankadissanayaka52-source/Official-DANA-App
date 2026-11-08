@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+
+[build.processing]
+  skip_processing = false
+
+[context.production.environment]
+  NETLIFY_DISABLE_DRAWER = "true"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
